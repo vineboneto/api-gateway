@@ -7,8 +7,8 @@ const proxies = {};
 app.use(express.json());
 
 const db = [
-  { email: "vineboneto@gmail.com", tenancyId: 1, url: "http://localhost:3334" },
-  { email: "johndoe@gmail.com", tenancyId: 2, url: "http://localhost:3335" },
+  { email: "vineboneto@gmail.com", serviceId: 1, url: "http://localhost:3334" },
+  { email: "johndoe@gmail.com", serviceId: 2, url: "http://localhost:3335" },
 ];
 
 const auth = () => (req, res, next) => {
@@ -18,7 +18,7 @@ const auth = () => (req, res, next) => {
   req.locals = {
     ...req?.locals,
     service: user?.url,
-    tenancyId: user?.tenancyId,
+    tenancyId: user?.serviceId,
   };
 
   next();
@@ -40,7 +40,7 @@ app.all("/api/*", auth(), (req, res, next) => {
       },
       onProxyReq: (proxyReq, req) => {
         const body = JSON.stringify(req.body);
-        const tenancyId = String(req?.locals?.tenancyId);
+        const tenancyId = String(req?.locals?.serviceId);
         proxyReq.setHeader("x-tenancy-id", tenancyId);
         proxyReq.setHeader("Content-Type", "application/json");
         proxyReq.setHeader("Content-Length", Buffer.byteLength(body));
